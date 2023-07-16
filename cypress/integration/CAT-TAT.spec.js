@@ -17,15 +17,21 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   })
 
   it('Fill the mandatory fields and send the form', () => {
-    cy.get('#firstName').type(user.username, ({ delay: 0 })).should('be.visible', 'success');
-    cy.get('#lastName').type(user.lastname, ({ delay: 0 })).should('be.visible', 'success');
-    cy.get('#email').type(user.email, ({ delay: 0 })).should('be.visible', 'success')
-    cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 })).should('be.visible', 'success')
+    cy.get('#firstName').type(user.username, ({ delay: 0 }))
+    cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
+    cy.get('#email').type(user.email, ({ delay: 0 }))
+    cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
     cy.contains('button', 'Enviar').click()
+    cy.get('.success').should('be.visible')
   })
 
   it('Show an error message when submitting the form with an email with invalid format', () => {
-    cy.get('#email').type('invalid@email', ({ delay: 0 })).should('be.visible', 'error')
+    cy.get('#firstName').type(user.username, ({ delay: 0 }))
+    cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
+    cy.get('#email').type('invalid@email', ({ delay: 0 }))
+    cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
+    cy.contains('button', 'Enviar').click()
+    cy.get('.error').should('be.visible')
   })
 
   it('Show an error message when the Telefone option turns into a mandatory field, but it is not filled before sending the form', () => {
@@ -53,7 +59,8 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   })
 
   it('Show an error message when submitting the form without filling the mandatory fields', () => {
-    cy.get('button[type="submit"]').click().should('be.visible', 'error')
+    cy.get('button[type="submit"]').click()
+    cy.get('.error').should('be.visible')
   })
 
   it('Submit the form successfully using a custom command', () => {
