@@ -25,7 +25,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('.success').should('be.visible')
   })
 
-  it.only('Show an error message when submitting the form with an email with invalid format', () => {
+  it('Show an error message when submitting the form with an email with invalid format', () => {
     cy.get('#firstName').type(user.username, ({ delay: 0 }))
     cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
     cy.get('#email').type('invalid@email', ({ delay: 0 }))
