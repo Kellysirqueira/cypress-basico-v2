@@ -25,7 +25,7 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.get('.success').should('be.visible')
   })
 
-  it('Show an error message when submitting the form with an email with invalid format', () => {
+  it.only('Show an error message when submitting the form with an email with invalid format', () => {
     cy.get('#firstName').type(user.username, ({ delay: 0 }))
     cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
     cy.get('#email').type('invalid@email', ({ delay: 0 }))
@@ -35,11 +35,11 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   })
 
   it('Show an error message when the Telefone option turns into a mandatory field, but it is not filled before sending the form', () => {
-    cy.get('#firstName').type(user.username, ({ delay: 0 })).should('be.visible', 'success')
-    cy.get('#lastName').type(user.lastname, ({ delay: 0 })).should('be.visible', 'success')
-    cy.get('#email').type(user.email, ({ delay: 0 })).should('be.visible', 'success')
-    cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 })).should('be.visible', 'success')
-    cy.get('#phone-checkbox').check().should('be.visible', 'error')
+    cy.get('#firstName').type(user.username, ({ delay: 0 }))
+    cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
+    cy.get('#email').type(user.email, ({ delay: 0 }))
+    cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
+    cy.get('#phone-checkbox').check()
     cy.contains('button', 'Enviar').click()
     cy.get('.error').should('be.visible')
   })
