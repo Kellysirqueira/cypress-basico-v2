@@ -2,7 +2,7 @@
 const randomstring = require("randomstring");
 
 describe('Central de Atendimento ao Cliente TAT', function() {
-  
+  const THREE_SECONDS_IN_MS = 3000;
   const user = {}
   beforeEach(() => {
     cy.visit('./src/index.html')
@@ -17,31 +17,50 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   })
 
   it('Fill the mandatory fields and send the form', () => {
+
+    cy.clock()
+
     cy.get('#firstName').type(user.username, ({ delay: 0 }))
     cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
     cy.get('#email').type(user.email, ({ delay: 0 }))
     cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
     cy.contains('button', 'Enviar').click()
+    
     cy.get('.success').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.success').should('not.be.visible')
+
   })
 
   it('Show an error message when submitting the form with an email with invalid format', () => {
+    cy.clock()
+
     cy.get('#firstName').type(user.username, ({ delay: 0 }))
     cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
     cy.get('#email').type('invalid@email', ({ delay: 0 }))
     cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
     cy.contains('button', 'Enviar').click()
     cy.get('.error').should('be.visible')
+    
+    cy.tick(THREE_SECONDS_IN_MS)
+    
+    cy.get('.error').should('not.be.visible')
   })
 
   it('Show an error message when the Telefone option turns into a mandatory field, but it is not filled before sending the form', () => {
+    cy.clock()
+
     cy.get('#firstName').type(user.username, ({ delay: 0 }))
     cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
     cy.get('#email').type(user.email, ({ delay: 0 }))
     cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
     cy.get('#phone-checkbox').check()
     cy.contains('button', 'Enviar').click()
+    
     cy.get('.error').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('not.be.visible')
+
   })
 
   it('Fill and Clean the fiels "name", "last name", "email", and "telefone"', ()  => {
@@ -59,12 +78,24 @@ describe('Central de Atendimento ao Cliente TAT', function() {
   })
 
   it('Show an error message when submitting the form without filling the mandatory fields', () => {
+    cy.clock()
     cy.get('button[type="submit"]').click()
     cy.get('.error').should('be.visible')
+    cy.tick(THREE_SECONDS_IN_MS)
+    cy.get('.error').should('not.be.visible')
+
   })
 
   it('Submit the form successfully using a custom command', () => {
+    cy.clock()
+
     cy.fillMandatoryFieldsAndSubimit()
+   
+    cy.get('.success').should('be.visible')
+   
+    cy.tick(THREE_SECONDS_IN_MS)
+
+    cy.get('.success').should('not.be.visible')
   })
 
   it('Select the product (Youtube) by the text', () => {
@@ -146,4 +177,6 @@ describe('Central de Atendimento ao Cliente TAT', function() {
       .click()
     cy.contains('Talking About Testing').should('be.visible')
   })
+
+  it('')
 });
