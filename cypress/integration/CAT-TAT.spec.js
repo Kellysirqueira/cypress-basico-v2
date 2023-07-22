@@ -46,20 +46,23 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     
     cy.get('.error').should('not.be.visible')
   })
-
-  it('Show an error message when the Telefone option turns into a mandatory field, but it is not filled before sending the form', () => {
-    cy.clock()
-
-    cy.get('#firstName').type(user.username, ({ delay: 0 }))
-    cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
-    cy.get('#email').type(user.email, ({ delay: 0 }))
-    cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
-    cy.get('#phone-checkbox').check()
-    cy.contains('button', 'Enviar').click()
-    
-    cy.get('.error').should('be.visible')
-    cy.tick(THREE_SECONDS_IN_MS)
-    cy.get('.error').should('not.be.visible')
+  
+  Cypress._.times(3, function () {
+    it('Show an error message when the Telefone option turns into a mandatory field, but it is not filled before sending the form', () => {
+      cy.clock()
+  
+      cy.get('#firstName').type(user.username, ({ delay: 0 }))
+      cy.get('#lastName').type(user.lastname, ({ delay: 0 }))
+      cy.get('#email').type(user.email, ({ delay: 0 }))
+      cy.get('#open-text-area').type(randomstring.generate(), ({ delay: 0 }))
+      cy.get('#phone-checkbox').check()
+      cy.contains('button', 'Enviar').click()
+      
+      cy.get('.error').should('be.visible')
+      cy.tick(THREE_SECONDS_IN_MS)
+      cy.get('.error').should('not.be.visible')
+  
+    })
 
   })
 
@@ -178,5 +181,55 @@ describe('Central de Atendimento ao Cliente TAT', function() {
     cy.contains('Talking About Testing').should('be.visible')
   })
 
-  it('')
+  it('Show and Hide the success and error messages using the command `.invoke`', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
+
+  it('Fill the text area using the command `.invoke`', function() {
+    const longText = Cypress._.repeat('0123456789', 20)
+
+    cy.get('#open-text-area')
+    .invoke('val', longText)
+    .should('have.value', longText)
+  })
+
+  it('Do the HTTP request', function () {
+    cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html')
+      .should(function(res) {
+        const { status, statusText, body } = res
+        expect(status).to.equal(200)
+        expect(statusText).to.equal('OK')
+        expect(body).to.include('CAC TAT')
+      })
+  })
+
+  it('Found the cat and', function () { 
+    cy.get('#cat')
+    .invoke('show')
+    .should('be.visible')
+  })
+
+  it('If Kermit is here, everything will work', function () {
+    cy.get('#kermit')
+    .invoke('show')
+    .should('be.visible')
+    cy.get('#title')
+      .invoke('text', 'CAT TAT')
+    cy.get('#subtitle')
+      .invoke('text', `Eu gosto de gatos, mas eu prefiro o Kermit 💚"`)
+  })
+
 });
